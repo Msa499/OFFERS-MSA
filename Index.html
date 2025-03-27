@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عجلة الخصومات | Wheel of Discounts</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2a0845 0%, #000000 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: 0;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: var(--opacity); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        header {
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #9c27b0, #ffeb3b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: neonGlow 2s infinite alternate;
+        }
+        
+        @keyframes neonGlow {
+            from { text-shadow: 0 0 5px #9c27b0, 0 0 10px #9c27b0, 0 0 15px #9c27b0; }
+            to { text-shadow: 0 0 10px #9c27b0, 0 0 20px #9c27b0, 0 0 30px #9c27b0; }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #b39ddb;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 40px;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            transform: rotate(0deg);
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
+            border: 5px solid #4a148c;
+        }
+        
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #4a148c;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            border: 5px solid #9c27b0;
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.8);
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ffeb3b;
+            z-index: 5;
+            filter: drop-shadow(0 0 5px rgba(255, 235, 59, 0.7));
+        }
+        
+        .spin-btn {
+            background: linear-gradient(90deg, #9c27b0, #673ab7);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+        }
+        
+        .spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.6);
+        }
+        
+        .spin-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .mobile-input {
+            margin-bottom: 20px;
+        }
+        
+        .mobile-input input {
+            padding: 12px 20px;
+            width: 250px;
+            border-radius: 50px;
+            border: 2px solid #9c27b0;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            margin-left: 10px;
+        }
+        
+        .mobile-input input:focus {
+            outline: none;
+            border-color: #ffeb3b;
+            box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+        
+        .result {
+            font-size: 2rem;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .discount-result {
+            font-weight: bold;
+            font-size: 3rem;
+            background: linear-gradient(90deg, #ffeb3b, #9c27b0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .error {
+            color: #ff5252;
+            margin-top: 10px;
+        }
+        
+        .success {
+            color: #69f0ae;
+            margin-top: 10px;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f44336;
+            opacity: 0;
+            z-index: 100;
+            animation: confetti 3s ease-in-out;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            color: #b39ddb;
+            font-size: 0.9rem;
+        }
+        
+        .social-share {
+            margin-top: 20px;
+        }
+        
+        .social-share button {
+            background: transparent;
+            border: 2px solid #9c27b0;
+            color: #9c27b0;
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .social-share button:hover {
+            background: #9c27b0;
+            color: white;
+        }
+        
+        /* ألوان أقسام العجلة */
+        .section-0 { background-color: #f44336; transform: rotate(0deg); }
+        .section-10 { background-color: #9c27b0; transform: rotate(36deg); }
+        .section-20 { background-color: #7b1fa2; transform: rotate(72deg); background-image: linear-gradient(45deg, #7b1fa2 50%, #000 50%); }
+        .section-30 { background-color: #1976d2; transform: rotate(108deg); }
+        .section-40 { background-color: #2196f3; transform: rotate(144deg); }
+        .section-50 { background-color: #ffc107; transform: rotate(180deg); }
+        .section-60 { background-color: #ffa000; transform: rotate(216deg); background-image: linear-gradient(45deg, #ffa000 50%, #000 50%); }
+        .section-70 { background-color: #ffeb3b; transform: rotate(252deg); }
+        .section-80 { background-color: #388e3c; transform: rotate(288deg); }
+        .section-90 { background-color: #8bc34a; transform: rotate(324deg); }
+        .section-100 { background-color: #00e676; transform: rotate(360deg); }
+        
+        .section-0 span { transform: rotate(18deg); }
+        .section-10 span { transform: rotate(54deg); }
+        .section-20 span { transform: rotate(90deg); }
+        .section-30 span { transform: rotate(126deg); }
+        .section-40 span { transform: rotate(162deg); }
+        .section-50 span { transform: rotate(198deg); }
+        .section-60 span { transform: rotate(234deg); }
+        .section-70 span { transform: rotate(270deg); }
+        .section-80 span { transform: rotate(306deg); }
+        .section-90 span { transform: rotate(342deg); }
+        .section-100 span { transform: rotate(378deg); }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo">عجلة الخصومات</h1>
+            <p class="subtitle">دور العج��ة واربح خصم فوري حتى 100%!</p>
+        </header>
+        
+        <div class="mobile-input">
+            <input type="tel" id="mobileNumber" placeholder="أدخل رقم هاتفك" maxlength="11">
+            <div id="mobileError" class="error"></div>
+        </div>
+        
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-section section-0"><span>0%</span></div>
+                <div class="wheel-section section-10"><span>10%</span></div>
+                <div class="wheel-section section-20"><span>20%</span></div>
+                <div class="wheel-section section-30"><span>30%</span></div>
+                <div class="wheel-section section-40"><span>40%</span></div>
+                <div class="wheel-section section-50"><span>50%</span></div>
+                <div class="wheel-section section-60"><span>60%</span></div>
+                <div class="wheel-section section-70"><span>70%</span></div>
+                <div class="wheel-section section-80"><span>80%</span></div>
+                <div class="wheel-section section-90"><span>90%</span></div>
+                <div class="wheel-section section-100"><span>100%</span></div>
+                <div class="wheel-center"></div>
+            </div>
+        </div>
+        
+        <button class="spin-btn" id="spinBtn" disabled>دور العجلة</button>
+        
+        <div class="result">
+            <div id="resultText"></div>
+        </div>
+        
+        <div id="discountResult" class="discount-result"></div>
+        
+        <div class="social-share">
+            <p>شارك مع أصدقائك ليفوزوا بخصومات!</p>
+            <button onclick="shareOnFacebook()">فيسبوك</button>
+            <button onclick="shareOnWhatsApp()">واتساب</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 عجلة الخصومات. جميع الحقوق محفوظة.</p>
+    </footer>
+    
+    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+    
+    <script>
+        // بيانات الخصومات مع احتمالاتها المعاكسة كما طلبت
+        const discounts = [
+            { percent: 0, probability: 100 },   // 0% يظهر بنسبة 100%
+            { percent: 10, probability: 90 },
+            { percent: 20, probability: 70 },
+            { percent: 30, probability: 50 },
+            { percent: 40, probability: 40 },
+            { percent: 50, probability: 30 },
+            { percent: 60, probability: 25 },
+            { percent: 70, probability: 20 },
+            { percent: 80, probability: 15 },
+            { percent: 90, probability: 12 },
+            { percent: 100, probability: 10 }    // 100% يظهر بنسبة 10%
+        ];
+        
+        // متغيرات التطبيق
+        let isSpinning = false;
+        let currentRotation = 0;
+        let usedNumbers = JSON.parse(localStorage.getItem('usedNumbers')) || [];
+        
+        // عناصر DOM
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const mobileNumberInput = document.getElementById('mobileNumber');
+        const mobileError = document.getElementById('mobileError');
+        const resultText = document.getElementById('resultText');
+        const discountResult = document.getElementById('discountResult');
+        const spinSound = document.getElementById('spinSound');
+        const winSound = document.getElementById('winSound');
+        const starsContainer = document.querySelector('.stars');
+        
+        // إنشاء النجوم المتلألئة
+        function createStars() {
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                star.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
+                star.style.setProperty('--opacity', Math.random());
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // التحقق من رقم الموبايل
+        function checkMobileNumber() {
+            const mobileNumber = mobileNumberInput.value.trim();
+            const regex = /^01[0125][0-9]{8}$/;
+            
+            if (!mobileNumber) {
+                mobileError.textContent = 'يجب إدخال رقم الهاتف';
+                spinBtn.disabled = true;
+                return false;
+            }
+            
+            if (!regex.test(mobileNumber)) {
+                mobileError.textContent = 'رقم الهاتف غير صحيح';
+                spinBtn.disabled = true;
+                return false;
+            }
+            
+            if (usedNumbers.includes(mobileNumber)) {
+                mobileError.textContent = 'إنت خدت فرصتك يا معلم! 🚀';
+                spinBtn.disabled = true;
+                return false;
+            }
+            
+            mobileError.textContent = '';
+            spinBtn.disabled = false;
+            return true;
+        }
+        
+        // اختيار خصم عشوائي حسب الاحتمالات
+        function getRandomDiscount() {
+            const totalProbability = discounts.reduce((sum, item) => sum + item.probability, 0);
+            let random = Math.random() * totalProbability;
+            let cumulativeProbability = 0;
+            
+            for (const discount of discounts) {
+                cumulativeProbability += discount.probability;
+                if (random <= cumulativeProbability) {
+                    return discount;
+                }
+            }
+            
+            return discounts[0]; // افتراضي 0% إذا حدث خطأ
+        }
+        
+        // تدوير العجلة
+        function spinWheel() {
+            if (isSpinning || !checkMobileNumber()) return;
+            
+            const mobileNumber = mobileNumberInput.value.trim();
+            const discount = getRandomDiscount();
+            const sectionDegree = 36; // 360° / 10 sections
+            const targetRotation = 360 * 5 + (360 - (discount.percent / 100 * 360)) + (sectionDegree / 2);
+            
+            isSpinning = true;
+            spinBtn.disabled = true;
+            mobileNumberInput.disabled = true;
+            resultText.textContent = '';
+            discountResult.textContent = '';
+            
+            // تشغيل صوت التدوير
+            spinSound.currentTime = 0;
+            spinSound.play();
+            
+            // بدء التدوير
+            currentRotation += targetRotation;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+            
+            // بعد انتهاء التدوير
+            setTimeout(() => {
+                isSpinning = false;
+                
+                // تشغيل صوت الفوز
+                winSound.currentTime = 0;
+                winSound.play();
+                
+                // عرض النتيجة
+                resultText.textContent = 'مبروك! لقد ربحت خصم:';
+                discountResult.textContent = `${discount.percent}%`;
+                
+                // حفظ رقم الموبايل
+                usedNumbers.push(mobileNumber);
+                localStorage.setItem('usedNumbers', JSON.stringify(usedNumbers));
+                
+                // إظهار الكونفيتي للخصومات الكبيرة
+                if (discount.percent >= 50) {
+                    createConfetti();
+                }
+            }, 4000);
+        }
+        
+        // إنشاء تأثير الكونفيتي
+        function createConfetti() {
+            const colors = ['#f44336', '#9c27b0', '#2196f3', '#ffeb3b', '#4caf50'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const size = 5 + Math.random() * 10;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `-10px`;
+                
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.setProperty('--delay', `${Math.random() * 2}s`);
+                
+                document.body.appendChild(confetti);
+                
+                // إزالة الكونفيتي بعد انتهاء الأنيميشن
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+        
+        // مشاركة على فيسبوك
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+        
+        // مشاركة على واتساب
+        function shareOnWhatsApp() {
+            const text = encodeURIComponent('دور على عجلة الخصومات واربح خصم حتى 100%! ' + window.location.href);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+        
+        // أحداث المستخدم
+        mobileNumberInput.addEventListener('input', checkMobileNumber);
+        spinBtn.addEventListener('click', spinWheel);
+        
+        // تهيئة التطبيق
+        createStars();
+    </script>
+</body>
+</html>
